@@ -1,0 +1,79 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  https://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  https://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/tx
+  https://www.springframework.org/schema/tx/spring-tx.xsd
+  http://www.springframework.org/schema/mvc
+  https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+  
+  <mvc:annotation-driven></mvc:annotation-driven>
+  <tx:annotation-driven/>
+  <context:component-scan base-package="com.bank"></context:component-scan>
+  <context:annotation-config/>
+  
+  <mvc:resources location="/WEB-INF/resources/" mapping="/resources/**"></mvc:resources>
+  <bean name="handlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+  
+  <bean name="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  		<property name="prefix" value="./"/>
+  		<property name="suffix" value=".jsp"/>
+  </bean>
+  
+  <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+  	<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+  	<property name="url" value="jdbc:mysql://localhost/rakesh_spring_web_orm"/>
+  	<property name="username" value="root"/>
+  	<property name="password" value="Janakiram@020327"/>
+  </bean>
+  
+  
+  <bean name="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+  	<property name="dataSource" ref="dataSource"/>
+  	<property name="hibernateProperties">
+  		<props>
+  			<prop  key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+  			<prop key="hibernate.show_sql">true</prop>
+  		</props>
+  	</property>
+  	<property name="annotatedClasses">
+  			<list>
+  				<value>com.bank.entities.Account</value>
+  				<value>com.bank.entities.Transactions</value>
+  				<value>com.bank.entities.users</value>
+  			</list>
+  	</property>
+  </bean>
+  
+  <bean name="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+  
+  		<property name="sessionFactory" ref="sessionFactory"/>
+  </bean>
+  
+   
+	<bean name="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+	
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>	
+	
+	<bean name="accountDao" class="com.bank.daos.AccountDao">
+  
+  		<property name="hibernateTemplate" ref="hibernateTemplate" />
+  	</bean>
+  	
+  	<bean name="transactionsDao" class="com.bank.daos.TransactionsDao">
+  		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+  	</bean>
+  	
+  	<bean name="userDao" class="com.bank.daos.UserDao">
+  		<property name="hibernateTemplate" ref="hibernateTemplate"/>
+  	</bean>
+  
+ </beans>
+  
+ 
